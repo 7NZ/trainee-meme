@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+<title>移动端无缝隙滚动，可触摸暂停，拖动</title>
+<style>
+body{padding: 0;margin: 0;}
+li,ol,ul{margin: 0;list-style: none;padding: 0;}
+div#l-btn{left: 0;color: gray;}
+div#r-btn{right: 0;color:brown;cursor: pointer;}
+.nav-container{position: relative;width: 98%;height:10em;overflow: hidden;margin: 2em auto;}
+.nav{position: absolute;top: 0;left:0;}
+.nav li{float: left;width:8em;text-align: center;}
+.nav li img{width: 100%;height: auto;}
+.nav span{font-size: 1.6em;}
+</style>
+</head>
+<body> 
+<div class="nav-container">
+<ul class="nav" id="nav"> 
+<li>文字文字文字文字<br/><span>1</span></li>
+<li>文字文字文字文字<br/><span>2</span></li>
+<li>文字文字文字文字<br/><span>3</span></li>
+<li>文字文字文字文字<br/><span>4</span></li> 
+<li>文字文字文字文字<br/><span>5</span></li>
+<li>文字文字文字文字<br/><span>6</span></li>
+<li>文字文字文字文字<br/><span>7</span></li> 
+<li>文字文字文字文字<br/><span>8</span></li>
+</ul>
+</div>
+</body>
+</html>
+<script type="text/javascript"> 
+var UcanSlide = function(ele,config){
+this.config = config||{};
+this.wrap = document.querySelector(ele);
+this.ul_wrap = this.wrap.querySelector('ul');
+this.ul_wrap.innerHTML += this.ul_wrap.innerHTML;
+this.oli = this.ul_wrap.querySelectorAll('li');
+this.len = this.oli.length; 
+this.marginRight = this.config.marginRight || 15; //设置li标签的右边距
+this.autoScroll = this.config.autoScroll || true; //设置容器的滚动状态
+this.scrollStep = this.config.scrollSpeed || 1; //设置容器滚动的步长,int,数值越大越快
+this.speed = this.config.speed || 10 ; //设置滚动速度,int,数值越大越慢,20已经很慢
+//this.direction = this.config.direction || 'left' ;
+this.setTime = null;
+this.warp_width = this.wrap.offsetWidth;
+this.dirX = this.warp_width;
+this.ul_wrap_width = 0;
+this.init(); 
+}
+UcanSlide.prototype.init = function(){
+var _this = this; 
+for(var i=0;i<this.len;i++){
+this.oli[i].style.marginRight = this.marginRight+'px';
+this.ul_wrap_width += (this.oli[i].offsetWidth+this.marginRight);
+}
+this.ul_wrap.style.width = this.ul_wrap_width+'px';
+
+if(this.ul_wrap_width<this.warp_width){
+return;
+}
+if(this.autoScroll){
+//执行无缝滚动
+this.setTime = setInterval(function(){
+　　_this.move();
+},this.speed);
+}
+
+this.ul_wrap.addEventListener('touchstart',function(e){
+_this.touchStart(e); 
+},false);
+this.ul_wrap.addEventListener('touchmove',function(e){ 
+_this.touchMove(e);
+},false);
+this.ul_wrap.addEventListener('touchend',function(e){
+_this.touchEnd(e);
+},false);
+}
+UcanSlide.prototype.move=function(){
+　　if(this.autoScroll){
+　　　　//自由滚动状态（自右向左）
+　　　　this.dirX = this.dirX-this.scrollStep;
+　　　　if(this.dirX<-this.ul_wrap_width/2||this.dirX>0){
+　　　　　　this.dirX=0;
+　　　　}
+　　}else{
+　　　　　//拖动状态
+　　　　if(this.dirX<-this.ul_wrap_width/2){
+　　　　　　this.dirX = 0;
+　　　　}else if(this.dirX >= 0){
+　　　　　　this.dirX=-this.ul_wrap_width/2;
+　　　　}
+　　}
+
+this.ul_wrap.style.webkitTransform = 'translate3d('+this.dirX+'px,'+'0px,0px)';
+};
+UcanSlide.prototype.touchStart = function(e){ 
+e.preventDefault();
+clearInterval(this.setTime);
+this.startX = e.targetTouches[0].clientX;
+};
+UcanSlide.prototype.touchMove = function(e){
+e.preventDefault();
+this.autoScroll = false;
+this.dirX += e.targetTouches[0].clientX-this.startX;
+this.startX = e.targetTouches[0].clientX;//记录前一次触屏坐标
+this.move();
+};
+UcanSlide.prototype.touchEnd = function(e){
+var _this = this;
+this.autoScroll = true;
+this.setTime = setInterval(function(){
+_this.move();
+},this.speed);
+};
+
+new UcanSlide('.nav-container',{
+speed: 10,
+});
+
+</script>
