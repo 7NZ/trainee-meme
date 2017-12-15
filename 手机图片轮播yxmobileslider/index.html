@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title></title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+       <style>
+       html,body,*{
+           margin:0;padding:0;
+       }
+       ul,li{list-style: none}
+
+        .slider{display:none}/*用于获取更加体验*/
+        .focus span{width:10px;height:10px;margin-right:10px;border-radius:50%;background:#666;font-size:0}
+        .focus span.current{background:#fff}
+
+       </style>
+    </head>
+    <body>
+<div style="height:300px;box-sizing:border-box">
+    <div class="slider">
+    <ul>
+        <li>
+            <a href="" target="_blank">
+                <img src="banner1.png" alt="">
+            </a>
+        </li>
+        <li>
+            <a href="" target="_blank">
+                <img src="banner2.jpg" alt="">
+            </a>
+        </li>
+        <li>
+            <a href="" target="_blank">
+                <img src="banner3.jpg" alt="">
+            </a>
+        </li>
+        
+    </ul>
+    </div>
+ </div>
+<script type="text/javascript" src="jquery.min.js"></script>
+<script type="text/javascript" src="yxmobileslider.js"></script>
+<script>
+    $(".slider").yxMobileSlider({
+        width: 640,
+        height: 430,
+        during: 3000
+    })
+</script>
+    </body>
+</html>
